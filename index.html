@@ -202,15 +202,32 @@ async function enterCodes() {
     document.getElementById("fetchButton").setAttribute("aria-busy","false");
 }
 
+
+
 async function sendRequest(connectCode) {
-    let res = await fetch("https://gql-gateway-dot-slippi.uc.r.appspot.com/graphql", 
-    {
-        method: 'post',
-	    body: JSON.stringify({query, variables : {"cc" : connectCode}}),
-	    headers: {'Content-Type': 'application/json'}
-    })
-    let d = await res.json();
-    let ud = d.data.getConnectCode;
+    var slpRankFailed = false;
+    var ud;
+    var modifiedConnectCode = connectCode.replace("#","-");
+    try {
+        let res = await fetch(`https://slprank.com/rank/${modifiedConnectCode}?raw`)
+        let dd = await res.json();
+        const y = await Promise.reject(30);
+    } catch (e) {
+        console.log("Ruh roh " + e)
+        slpRankFailed = true;
+    }
+    if (!slpRankFailed) {
+        ud = dd.data.getConnectCode;
+    } else {
+        let resFallback = await fetch("https://gql-gateway-dot-slippi.uc.r.appspot.com/graphql", 
+        {
+            method: 'post',
+            body: JSON.stringify({query, variables : {"cc" : connectCode}}),
+            headers: {'Content-Type': 'application/json'}
+        })
+        let d = await resFallback.json();
+        ud = d.data.getConnectCode;
+    }
     if(ud) {
         return {
         code : ud.user.connectCode.code,
