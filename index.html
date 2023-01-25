@@ -209,7 +209,9 @@ async function sendRequest(connectCode) {
     var ud;
     var modifiedConnectCode = connectCode.replace("#","-");
     try {
-        let res = await fetch(`https://slprank.com/rank/${modifiedConnectCode}?raw`)
+        let res = await fetch(`https://slprank.com/rank/${modifiedConnectCode}?raw`, {
+            method: 'GET'
+        })
         let dd = await res.json();
         const y = await Promise.reject(30);
     } catch (e) {
